@@ -1,0 +1,25 @@
+Hi Jerry : 
+
+=======================Video mode on LI80=========================================================
+
+git clone http://172.16.201.30/sigmastar837/sdk-kernel-5.10.git
+2. git checkout feed_frame_adas
+3. git pull
+4. go into docker container
+docker run -it --net=host -v [my_path]:/src sav837:v2
+5. cd /src
+6. make clean all [success] use WNC-Emplyee-TW wifi
+7. make build all [success] use WNC-Emplyee-TW wifi
+8. cd sdk/verify/CardvUI/ffmpeg/ssplayer
+9. make [success]
+10. cd ../../../Cardvimpl/cardv/src
+11 make [success] [it will create cardv]
+====================================================
+12. add  ssplayer file into the directory : sdk/verify/Cardvimpl/cardv/src
+
+
+image
+
+13.  module_adas.cpp add  code : #include "ssplayer_player.h"
+
+14. make [it will have fatal error]
