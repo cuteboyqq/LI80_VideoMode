@@ -1,0 +1,48 @@
+Hi Austin Chen(陳宣穎)  :  l need to burn the FW image from the gitlab http://172.16.201.30/sigmastar837/sdk-kernel-5.10/tree/feed_frame_adas 
+			into the LI80  camera (SAV837 camera) , but l do not know how to burn FW image into the LI80 camera, could you help me ?
+
+Hi Alister,
+If the generated image is fine. Please refer to the below step to make an OTA image and upgrade the device(LI80).
+ 
+Step1. go to /src/project/image/makefiletools/ota
+cd /src/project/image/makefiletools/ota
+ 
+Step2. execute ota.sh
+./ota.sh
+ 
+Step3. go to /src/project/image/makefiletools/ota/out
+cd /src/project/image/makefiletools/ota/out
+ 
+Step4. download three files (layout.txt,  OTA_PACK.bin,  SHA256)
+ 
+Step5. In your PC, zip three files (refer Step4). And name to fota.zip
+ 
+Step6. refer FW upgrade step to upload the fota.zip and execute FW upgrade.
+
+
+        4.2 FOTA (from v1.0.4.2 to v1.0.5.1)
+HW: SGB version
+    1. Check WiFi MAC address. Enter cat /misc/wifimac 
+If the MAC address been set, please skip the step 2 and go to step 3 directly
+
+    2. Enter echo "00:90:4C:2D:A0:FF" > /misc/wifimac
+    3. Enter tftp -r wnc_wifi_preset.sh -l /misc/wnc_wifi_preset.sh -g 192.168.1.10(IP address of the tftp server)
+
+    4. Get fota file from PC, enter tftp -r fota.zip -l /fota/fota.zip -g 192.168.1.10 (IP address of the tftp server)
+
+
+    5. Change permissions to execute fota scripts, enter chmod 777 /misc/wnc_wifi_preset.sh 
+
+    6. Run FOTA upgrade, enter /misc/wnc_wifi_preset.sh &
+
+If the device is powered by Go device, please send a ignition off signal to Safeway. If FOTA success, you will hear bootup audio 3 times.
+1st: SOC upgrade finish
+2nd: MCU upgrade finish
+3rd: Whole system upgrade finish
+
+
+
+The detail is shown in the document, which you can refer.
+ 
+cat etc/WNC_VERSION
+cat misc/MCU_VERSION
