@@ -1,0 +1,13 @@
+# Upgrade LI80 FW SOP
+
+1. Using FileZilla to connect sftp, and download FW (fota.zip & )
+
+sftp://wncsftp01.wnc.com.tw
+    
+    User : gucdli80
+    
+    Password : 5XuDfLWgg4
+    
+2. for example : download 1.0.8.2
+
+
