@@ -46,3 +46,7 @@ The detail is shown in the document, which you can refer.
  
 cat etc/WNC_VERSION
 cat misc/MCU_VERSION
+
+https://ais.wnc.com.tw/aisproject/UCD-LI80/Shared%20Documents/SW/System/Release
+
+
