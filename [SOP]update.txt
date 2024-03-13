@@ -1,0 +1,41 @@
++++++++++++++++++++++++++++++++++
+IP: 192.168.1.1
+帳號: root
+密碼: ALUDS$#q
++++++++++++++++++++++++++++++++++
+
+1. 用 tftp 上傳 1072_0013 的 fota 檔案 (wnc_wifi_preset.sh 會有一個命名過渡期 wnc_preset.sh 在 misc下)
+|
+├──(1072更新需做一次，做過不用在做) tftp -r wnc_wifi_preset.sh -l /misc/wnc_wifi_preset.sh -g 192.168.1.10
+|
+└── tftp -r fota.zip -l /fota/fota.zip -g 192.168.1.10
+
+
+2. 產生自動更新方式 (每次進行手動FOTA更新都要做一次)
+
+|
+├── mkdir /customer/cust-scripts
+|
+├── rm -r /fota/customize_trigger
+|
+└──tftp -r start.sh -l /customer/cust-scripts/start.sh -g 192.168.1.10
+
+
+3. 重新上電
+
+5. 如果接go device，要拔點火線才會更新，其餘會直接更新
+
+6. 如果更新成功 (開機聲2次)，自動關機
+
+7. 版號 (Note: MCU 0.0.1.4 的功能是新增在 MCU bootloader 故用0.0.1.3 就可以)
+
+cat etc/WNC_VERSION
+WNC_INTERNAL_VERSION=1.0.7.2
+SYS_GIT_HASH=30d28a4
+ADAS_VERSION=0.5.0
+MCU_BUILD_VERSION=0.0.1.3
+MCU_BUILD_GIT=1fd83ce
+RELEASE_NUMBER=26
+RELEASE_SKU=0
+/ # cat misc/MCU_VERSION
+0.0.1.3/ #
