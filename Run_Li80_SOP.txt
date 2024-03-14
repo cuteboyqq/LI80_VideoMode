@@ -1,0 +1,137 @@
+# SVA837 Start up SOP
+
+
+[11:07 AM] Austin Chen(陳宣穎)
+要按住sim卡槽旁邊的按鈕與紅色按鈕，3秒 (Open WIFI FW Ver1.0.8.2)
+
+open putty
+IP: 192.168.1.1
+
+before open putty, you need to let computer connect to the device
+Set the computer IPV4
+Address : 192.168.1.4
+NetMask : 255.255.0.0
+
+check the device is connect
+[console] ping 192.168.1.1
+open putty 192.168.1.1 :
+account : root
+password : ALUDS$#q
+[Hint : putty SSH will connect refused sometimes, wait a minute and connect again]
+
+Step 1 : in putty, set time
+google search unix timestamp
+type the timestamp in :
+[putty] date -s @[unix timestamp]
+
+Step 2 : kill the cardv (default one)
+[putty] ps
+[putty] kill -9 PID
+
+Step 3: Test with cardv , and upload the cardv to this folder
+[putty] cd customer
+[putty] tftp -h (help)
+[putty]
+
+=============================================================================
+How to get the cardv:
+
+1. build docker image
+2. create a docker container (docker run sav837) and go to container
+[console] docker run -it -v [your/user/directory/sdk...:/home/ali] sav837:v1
+3. build project
+[console] make clean_all
+[console] make buuld_all
+4. build cardv (final)
+go to the directory:
+[console] cd sdk/verify/Cardvimpl/cardv
+[console] make
+after make successful :
+[console] arm-linux-gnueabihf-strip bin/cardv
+==============================================================================
+5. install tftp hpa
+google search : tftp hpa
+https://tsaiyuyan.github.io/2020/05/19/linux/ubuntu-an-zhuang-tftp-server/
+6. copy thr "cardv" to tftp server , and upload the cardv to the device
+    
+    SOP GUIDE link: https://gist.github.com/joshschmelzle/6aa786e5da37eea77b4bf0fcf85c3881
+    [console] cat /etc/default/tftpd-hpa
+    
+    - ---Put the file to directory : /home/ali/Public/tftp ---
+    [console] sudo scp cardv /home/ali/Public/tftp/
+    [putty 192.168.1.1] cd ../../
+    [putty] cd customer
+    [Hint] -g : get, -r : remote
+    [putty] tftp -g -r [filename].tar [computer IP]
+    [putty] tftp -g -r 1.0.5.3-pre-FOTA.tar 192.168.1.4
+    ---------------------	kill the cardv ----------------------------
+    [putty] ps -a
+    
+    [putty] kill -9 828 (Hint : it always at pid 828)
+    
+    Start run the cardv on the background
+    [putty] ./customer/cardv /bootconfig/bin/wnc_bayer_one_by.ini &
+    initialize the ADAS
+    [putty] echo adas status 0 > /tmp/cardv_fifo
+    [putty] echo adas status 1 > /tmp/cardv_fifo
+    
+    # ======================================================================
+    config directory :
+    [putty2] cd /customer/adas/config
+    [putty2] vi config.txt
+    
+    # the save result image directory
+    open a new SSH on putty
+    putty interface : 192.168.1.1
+    [putty2] cd /mnt/mmc/adas/debug/images
+    
+    # tar the image file
+    [putty] tar -f [folder_name].tar -c [folder_name]
+    
+    put the tar file into the tftp server
+    -p : put
+    -l : local file
+    
+    [putty] tftp -p -l [folder_name].tar [tftp server IP]
+    For example :
+    [putty] tftp -p -l 2024-1-4-13-9.tar 192.168.1.4
+    
+    [console] cd /home/ali/Public/tftp
+    and you will see the [folder_name].tar file in this directory
+    
+    untar the file
+    [console] sudo tar -xvf [folder_name].tar
+    
+    Give permission to opern the image folder
+    [console] sudo chmod 777 -R [folder_name].tar
+    
+    Check the image file name, if there is some frame drops
+    
+    Result 2024-01-17 : No drop frame
+    
+    ============================================
+    ADAS result image/log
+    [putty] cd /mnt/mmc/adas/debug/
+    
+    config.txt to enable save the ADAS result images
+    [putty] cd /customer/adas/config
+    [putty] vi config.txt
+    
+    set --> DebugSaveImages = 1
+    set --> DebugSaveLogs = 1
+    
+    restart the ADAS
+    [putty] up,up,enter
+    [putty] echo adas status 0 > /tmp/cardv_fifo
+    [putty] echo adas status 1 > /tmp/cardv_fifo
+    
+
+=======================
+check version
+cat etc/WNC_VERSION
+cat misc/MCU_VERSION
+
+# 
+
+SOP GUIDE link: https://gist.github.com/joshschmelzle/6aa786e5da37eea77b4bf0fcf85c3881
+[console] cat /etc/default/tftpd-hpa
