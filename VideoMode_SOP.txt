@@ -1,0 +1,44 @@
+1. modify config.txt
+[ssh] vi /customer/adas/config/config.txt
+
+# === Video Mode Param === #
+enableVideoMode = 1   //Enable / disable video mode
+videoPath = /mnt/mmc/Normal/B/GEOTAB_video2.mp4  // input video path
+saveVideoImages = 1 //Save raw frame ,it did not save now, and can not modify now
+decodeType = 1 // 0 : software , 1 :hardware , force using 1:hardware now, can not modify now
+
+
+end setting 
+[ssh] :wq
+
+2. you need to make sure you have put video.mp4 into the LI80 camera
+
+for example : videoPath = /mnt/mmc/Normal/B/GEOTAB_video2.mp4  // input video path
+
+3.     run cardv:
+[ssh] cardv /bootconfig/bin/wnc_one_bayer_by.ini &
+
+4.   stop rec :
+[ssh] echo rec 0 > /tmp/cardv_fifo
+
+5.   run adas:
+[ssh] echo adas status 1 > /tmp/cardv_fifo
+
+
+it will start run video inference (video mode), and save image with ADAS result
+
+6. check the image result
+[ssh] cd /mnt/mmc/adas/debug/images/[date-time]
+
+7. tar image folder
+[ssh] tar cvf [date-time].tar [date-time]
+
+8. put tar file to tftp server
+[ssh] tftp -l [date-time].tar -p [tftp IP]
+
+9. untar the [date-time].tar at tftp server
+[local] sudo chmod 777 [date-time].tar
+[local] tar -xvf [date-time].tar
+[local] sudo chmod -R [date-time]
+
+10. you can open the folder named [date-time] and open image.jpg
